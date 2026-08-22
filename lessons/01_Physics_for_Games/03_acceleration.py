@@ -21,7 +21,7 @@ y_pos = (SCREEN_HEIGHT - SQUARE_SIZE) // 2
 d_t = 1 / FPS  # Time step for physics calculations
 
 mass = 2.0 # Mass of the square, used to calculate acceleration
-velocity = 0
+velocity = 1
 
 # Movement direction: 1 for right, -1 for left
 direction = 1
