@@ -31,7 +31,7 @@ class GameSettings:
     white: tuple = (255, 255, 255)
     black: tuple = (0, 0, 0)
 
-    gravity: float = 60.0 # acceleration, the change in velocity per frame
+    gravity: float = 100.0 # acceleration, the change in velocity per frame
     d_t: float = 1.0/30
     m: float = 2.0 # mass of the player, used to calculate acceleration
 
@@ -52,6 +52,7 @@ is_jumping = False
 # Main game loop
 running = True
 clock = pygame.time.Clock()
+d_v_y = 0 
 
 while running:
 
@@ -68,10 +69,10 @@ while running:
         # Jumping means that the player is going up. The top of the 
         # screen is y=0, and the bottom is y=SCREEN_HEIGHT. So, to go up,
         # we need to have a negative y velocity
-              is_jumping = True
-    d_v_y = -settings.jump_velocity
-            
-
+            is_jumping = True
+            d_v_y = -settings.jump_velocity
+    if is_jumping is False:        
+        d_v_y = settings.jump_velocity
     # acelleration in sht y direction
     a_y = settings.gravity
 

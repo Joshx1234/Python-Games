@@ -55,14 +55,16 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    key = pygame.key.get_pressed()
     # Continuously jump. If the square is not jumping, make it jump
-    if is_jumping is False:
+    if key[pygame.K_SPACE]:
+        if is_jumping is False:
         # Jumping means that the square is going up. The top of the 
         # screen is y=0, and the bottom is y=screen_height. So, to go up,
         # we need to have a negative y velocity
         
-        velocity_y = -settings.jump_velocity_y
-        velocity_x = settings.jump_velocity_x * x_direction
+            velocity_y = -settings.jump_velocity_y
+            velocity_x = settings.jump_velocity_x * x_direction
         
         is_jumping = True
         
