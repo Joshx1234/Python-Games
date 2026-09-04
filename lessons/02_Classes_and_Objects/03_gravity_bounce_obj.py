@@ -24,6 +24,8 @@ import pygame
 
 
 class Colors:
+    def __init__(self, colors:str):
+        self.colors = colors
     """Constants for Colors"""
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
@@ -151,7 +153,9 @@ settings = GameSettings()
 game = Game(settings)
 
 p1 = Player(game)
+p2 = Player(game)
 game.add_player(p1)
+game.add_player(p2)
 
 
 game.run()

@@ -32,6 +32,7 @@ import math
 import pygame
 
 
+
 def event_loop():
     """Wait until user closes the window"""
     while True:
@@ -46,12 +47,28 @@ class Turtle:
         self.screen = screen
         self.angle = 0  # Angle in degrees, starting facing right
 
-    def forward(self, distance):
+    
+
+    def left(self, angle):
+        # Turn left by adjusting the angle counterclockwise
+        self.angle = (self.angle + angle) % 360
+
+    
+
+class More_Turtles(Turtle):
+    def __init__(self, screen, x:int, y:int):
+        self.screen = screen
+        self.x = x
+        self.y = y
+        self.angle = 0
+
+    def forward(self, distance, color:str):
         # Calculate new position based on current angle
         radian_angle = math.radians(self.angle)
 
         start_x = self.x  # Save the starting position
         start_y = self.y
+        self.color = color
 
         # Calculate the new position displacement
         dx = math.cos(radian_angle) * distance
@@ -62,14 +79,7 @@ class Turtle:
         self.y -= dy
 
         # Draw line to the new position
-        pygame.draw.line(self.screen, black, (start_x, start_y), (self.x, self.y), 2)
-
-    def left(self, angle):
-        # Turn left by adjusting the angle counterclockwise
-        self.angle = (self.angle + angle) % 360
-
-
-# Main loop
+        pygame.draw.line(self.screen, color, (start_x, start_y), (self.x, self.y), 2)     
 
 # Initialize Pygame
 pygame.init()
@@ -84,12 +94,20 @@ white = (255, 255, 255)
 black = (0, 0, 0)
 
 screen.fill(white)
-turtle = Turtle(screen, screen.get_width() // 2, screen.get_height() // 2)  # Start at the center of the screen
+turtle = More_Turtles(screen, screen.get_width() // 2, screen.get_height() // 2)  # Start at the center of the screen
 
 # Draw a square using turtle-style commands
+
+def Get_X_and_Y():
+    print(turtle.x)
+    print(turtle.y)
+
 for _ in range(4):
-    turtle.forward(100)  # Move forward by 100 pixels
+    turtle.forward(100, "red")  # Move forward by 100 pixels
     turtle.left(90)  # Turn left by 90 degrees
+    Get_X_and_Y()
+
+
 
 # Display the drawing
 pygame.display.flip()
