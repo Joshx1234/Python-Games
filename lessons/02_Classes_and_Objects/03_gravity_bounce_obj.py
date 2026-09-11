@@ -21,6 +21,7 @@ Player class!), of different colors, bouncing around in different trajectories.
 
 """
 import pygame
+import random
 
 
 class Colors:
@@ -60,6 +61,7 @@ class Game:
     def __init__(self, settings: GameSettings):
         pygame.init()
 
+        
         self.settings = settings
         self.running = True
 
@@ -95,21 +97,26 @@ class Game:
 class Player:
     """Player class, just a bouncing rectangle"""
 
-    def __init__(self, game: Game):
+    def __init__(self, game: Game, posx, posy, velx, vely, color):
         self.game = game
         settings = game.settings
+        self.posx = posx
+        self.posy = posy
+        self.velx = velx
+        self.vely = vely
+        self.color = color
 
         self.width = settings.player_width
         self.height = settings.player_height
       
-        self.is_jumping = False
+        self.is_jumping = True
         self.v_jump = settings.jump_v_y
 
-        self.y = settings.player_start_y if settings.player_start_y is not None else settings.height - self.height
-        self.x = settings.player_start_x
+        self.y = posy
+        self.x = posx
         
-        self.v_x = settings.v_0_x  # X Velocity
-        self.v_y = settings.v_0_y  # Y Velocity
+        self.v_x = velx  # X Velocity
+        self.v_y = vely  # Y Velocity
 
     def update(self):
         """Update player position, continuously jumping"""
@@ -146,16 +153,19 @@ class Player:
             self.is_jumping = True
 
     def draw(self, screen):
-        pygame.draw.rect(screen, Colors.BLACK, (self.x, self.y, self.width, self.height))
+        pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height))
 
 
 settings = GameSettings()
 game = Game(settings)
 
-p1 = Player(game)
-p2 = Player(game)
-game.add_player(p1)
-game.add_player(p2)
+for i in range(10000):
+    p = Player(game, random.randint(0, 250), random.randint(0, 250), random.randint(0, 1000), random.randint(250, 1000), (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+    game.add_player(p)
+for i in range(3000):
+    p = Player(game, random.randint(0, 250), random.randint(0, 250), random.randint(0, 1000), random.randint(0, 250), (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+    game.add_player(p)
+
 
 
 game.run()
