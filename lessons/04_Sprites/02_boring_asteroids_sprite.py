@@ -1,5 +1,9 @@
 import pygame
 import math
+from pathlib import Path
+
+
+assets = Path(__file__).parent / "images"
 
 
 class Settings:
@@ -211,15 +215,25 @@ class Game:
         pygame.quit()
 
 
+class AlienSpaceship(Spaceship):
+    
+    def create_spaceship_image(self):
+        """Creates the spaceship shape as a surface."""
+        
+        return pygame.image.load(assets/'alien1.gif')
+
+
 if __name__ == "__main__":
 
     settings = Settings()
 
     game = Game(settings)
 
-    spaceship = Spaceship(
+    spaceship = AlienSpaceship(
         settings, position=(settings.width // 2, settings.height // 2)
     )
+
+
 
     game.add(spaceship)
 

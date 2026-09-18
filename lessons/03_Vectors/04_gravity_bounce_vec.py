@@ -153,6 +153,10 @@ class Player:
         if self.at_top() and self.going_up():
             self.vel.y = -self.vel.y # Bounce off the top. 
 
+        self.drag = -self.vel * 0.001   
+
+        self.vel += self.drag    
+
         # If the player hits one side of the screen or the other, bounce the
         # player. we are also checking if the player has a velocity going farther
         # off the screeen, because we don't want to bounce the player if it's
