@@ -88,21 +88,42 @@ class Spaceship(pygame.sprite.Sprite):
     # we also need to call the update method of the parent class, so we use
     # super().update()
     def update(self):
-        
+        self.update_angle()
+        self.update_position()
+
+
+
+
+
+
+    def update_position(self):
+        keys = pygame.key.get_pressed()
+        pos = (self.rect.x, self.rect.y)
+        pos += self.velocity
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
+            update_pos = pygame.Vector2(0, 0)
+            update_pos.from_polar((1, (self.angle - 90)))
+            self.velocity = self.velocity + (update_pos * 0.05)       
+
+
+
+    def update_angle(self):    
         keys = pygame.key.get_pressed()
 
-        if keys[pygame.K_LEFT]:
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.angle -= 5
 
-        if keys[pygame.K_RIGHT]:
-            self.angle += 5
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+                self.angle += 5
 
         if keys[pygame.K_SPACE] and self.ready_to_shoot():
-            self.fire_projectile()
+                self.fire_projectile()
 
         self.image = pygame.transform.rotate(self.original_image, -self.angle)
 
-        # Reassigning the rect because the image has changed.
+            # Reassigning the rect because the image has changed.
         self.rect = self.image.get_rect(center=self.rect.center)
         
         self.rect.center += self.velocity
@@ -147,6 +168,7 @@ class Projectile(pygame.sprite.Sprite):
             radius=half_size,
         )
 
+        
         # Notice that we are using the rect attribute to store the position of the projectile
         self.rect = self.image.get_rect(center=position)
 
@@ -186,10 +208,6 @@ class Game:
                 self.running = False
 
     def update(self):
-
-        # We only need to call the update method of the group, and it will call
-        # the update method of all sprites But, we have to make sure to add all
-        # of the sprites to the group, so they are updated.
         self.all_sprites.update()
 
     def draw(self):
@@ -221,6 +239,7 @@ class AlienSpaceship(Spaceship):
         """Creates the spaceship shape as a surface."""
         
         return pygame.image.load(assets/'alien1.gif')
+    
 
 
 if __name__ == "__main__":

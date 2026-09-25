@@ -1,7 +1,10 @@
 import pygame
 from Settings import *
+from map import Map
 
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+
+map = Map()
 
 while True:
     for event in pygame.event.get():
@@ -10,5 +13,7 @@ while True:
             exit()
 
     screen.fill((0, 0, 0))
+
+    map.render(screen)
 
     pygame.display.update()       
