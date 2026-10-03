@@ -15,9 +15,21 @@ pygame.init()
 
 images_dir = Path(__file__).parent / "images" if (Path(__file__).parent / "images").exists() else Path(__file__).parent / "assets"
 
-# Screen dimensions
-WIDTH, HEIGHT = 600, 300
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+class GameSettings:
+
+        screen_width: int = 600
+        screen_height: int = 300
+        player_size: int = 10
+        player_x: int = 100 # Initial x position of the player
+
+        jump_velocity: int = 100
+        white: tuple = (255, 255, 255)
+        black: tuple = (0, 0, 0)
+
+        gravity: float = 100.0 # acceleration, the change in velocity per frame
+        d_t: float = 1.0/30
+        m: float = 2.0 # mass of the player, used to calculate acceleration
+screen = pygame.display.set_mode((GameSettings.screen_width, GameSettings.screen_height))
 pygame.display.set_caption("Dino Jump")
 
 # Colors
@@ -37,6 +49,7 @@ player_speed = 5
 OBSTACLE_WIDTH = 20
 OBSTACLE_HEIGHT = 20
 obstacle_speed = 5
+
 
 # Font
 font = pygame.font.SysFont(None, 36)
@@ -77,25 +90,43 @@ class Player(pygame.sprite.Sprite):
         self.image.fill(BLUE)
         self.rect = self.image.get_rect()
         self.rect.x = 50
-        self.rect.y = HEIGHT - PLAYER_SIZE - 10
+        self.rect.y = GameSettings.screen_height - PLAYER_SIZE - 10
         self.speed = player_speed
 
+        self.is_jumping = False
     def update(self):
+        
+        d_v_y = 0
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            self.rect.y -= self.speed
-        if keys[pygame.K_DOWN]:
-            self.rect.y += self.speed
 
-        # Keep the player on screen
-        if self.rect.top < 0:
-            self.rect.top = 0
-        if self.rect.bottom > HEIGHT:
-            self.rect.bottom = HEIGHT
+        if keys[pygame.K_SPACE]:
+            if self.is_jumping is False:
+            # Jumping means that the player is going up. The top of the 
+            # screen is y=0, and the bottom is y=SCREEN_HEIGHT. So, to go up,
+            # we need to have a negative y velocity
+                self.is_jumping = True
+                d_v_y = -GameSettings.jump_velocity
+        if self.is_jumping is False:        
+            d_v_y = GameSettings.jump_velocity
+        # acelleration in sht y direction
+        a_y = GameSettings.gravity
+
+        # Change in the velocity due to accelleration
+        d_v_y += a_y * GameSettings.d_t
+
+        # Change in the position due to the velocity
+        d_y = d_v_y * GameSettings.d_t
+
+        self.rect.y += d_y
+        if self.is_jumping and not keys[pygame.K_SPACE]:
+            while not self.rect.y == GameSettings.screen_height:
+                pass
 
 # Create a player object
 player = Player()
 player_group = pygame.sprite.GroupSingle(player)
+
+
 
 # Add obstacles periodically
 def add_obstacle(obstacles):

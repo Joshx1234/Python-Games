@@ -43,10 +43,8 @@ settings = GameSettings()
 screen = pygame.display.set_mode((settings.screen_width, settings.screen_height))
 
 # Define player
-player = pygame.Rect(settings.player_x, 
-                     settings.screen_height - settings.player_size, 
-                     settings.player_size, settings.player_size)
 
+player = pygame.rect(settings.player_size, settings.player_size,)
 is_jumping = False
 
 # Main game loop
