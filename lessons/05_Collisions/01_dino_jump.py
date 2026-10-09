@@ -22,11 +22,11 @@ class GameSettings:
         player_size: int = 10
         player_x: int = 100 # Initial x position of the player
 
-        jump_velocity: int = 100
+        jump_velocity: int = 30
         white: tuple = (255, 255, 255)
         black: tuple = (0, 0, 0)
 
-        gravity: float = 100.0 # acceleration, the change in velocity per frame
+        gravity: float = 10.0 # acceleration, the change in velocity per frame
         d_t: float = 1.0/30
         m: float = 2.0 # mass of the player, used to calculate acceleration
 screen = pygame.display.set_mode((GameSettings.screen_width, GameSettings.screen_height))
@@ -62,8 +62,8 @@ class Obstacle(pygame.sprite.Sprite):
         self.image = pygame.Surface((OBSTACLE_WIDTH, OBSTACLE_HEIGHT))
         self.image.fill(BLACK)
         self.rect = self.image.get_rect()
-        self.rect.x = WIDTH
-        self.rect.y = HEIGHT - OBSTACLE_HEIGHT - 10
+        self.rect.x = GameSettings.screen_width
+        self.rect.y = GameSettings.screen_width - OBSTACLE_HEIGHT - 10
 
         self.explosion = pygame.image.load(images_dir / "explosion1.gif")
 
@@ -86,6 +86,7 @@ class Obstacle(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
+        self.v_y = 0
         self.image = pygame.Surface((PLAYER_SIZE, PLAYER_SIZE))
         self.image.fill(BLUE)
         self.rect = self.image.get_rect()
@@ -98,6 +99,7 @@ class Player(pygame.sprite.Sprite):
         
         d_v_y = 0
         keys = pygame.key.get_pressed()
+        
 
         if keys[pygame.K_SPACE]:
             if self.is_jumping is False:
@@ -106,21 +108,27 @@ class Player(pygame.sprite.Sprite):
             # we need to have a negative y velocity
                 self.is_jumping = True
                 d_v_y = -GameSettings.jump_velocity
-        if self.is_jumping is False:        
-            d_v_y = GameSettings.jump_velocity
-        # acelleration in sht y direction
-        a_y = GameSettings.gravity
 
+        # acelleration in the y direction
+        a_y = -GameSettings.gravity
+
+        
+
+        
         # Change in the velocity due to accelleration
-        d_v_y += a_y * GameSettings.d_t
+        d_v_y += -a_y * GameSettings.d_t
 
         # Change in the position due to the velocity
-        d_y = d_v_y * GameSettings.d_t
+        self.v_y += d_v_y * GameSettings.d_t
 
-        self.rect.y += d_y
-        if self.is_jumping and not keys[pygame.K_SPACE]:
-            while not self.rect.y == GameSettings.screen_height:
-                pass
+        if self.is_jumping is False:
+            self.v_y = 0
+
+        if self.is_jumping is True and (self.rect.y == GameSettings.screen_height or self.rect.y > GameSettings.screen_height):
+            self.is_jumping = False
+
+       
+        self.rect.y += self.v_y
 
 # Create a player object
 player = Player()
@@ -188,7 +196,7 @@ def game_loop():
         screen.blit(obstacle_text, (10, 10))
 
         pygame.display.update()
-        clock.tick(FPS)
+        # clock.tick(FPS)
 
     # Game over screen
     screen.fill(WHITE)

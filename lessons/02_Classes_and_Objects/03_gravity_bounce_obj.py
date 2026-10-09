@@ -159,10 +159,10 @@ class Player:
 settings = GameSettings()
 game = Game(settings)
 
-for i in range(10000):
+for i in range(10):
     p = Player(game, random.randint(0, 250), random.randint(0, 250), random.randint(0, 1000), random.randint(250, 1000), (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
     game.add_player(p)
-for i in range(3000):
+for i in range(30):
     p = Player(game, random.randint(0, 250), random.randint(0, 250), random.randint(0, 1000), random.randint(0, 250), (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
     game.add_player(p)
 
