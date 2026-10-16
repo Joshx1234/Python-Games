@@ -22,11 +22,11 @@ class GameSettings:
         player_size: int = 10
         player_x: int = 100 # Initial x position of the player
 
-        jump_velocity: int = 30
+        jump_velocity: float = 1.25
         white: tuple = (255, 255, 255)
         black: tuple = (0, 0, 0)
 
-        gravity: float = 10.0 # acceleration, the change in velocity per frame
+        gravity: float = 1.0 # acceleration, the change in velocity per frame
         d_t: float = 1.0/30
         m: float = 2.0 # mass of the player, used to calculate acceleration
 screen = pygame.display.set_mode((GameSettings.screen_width, GameSettings.screen_height))
@@ -41,14 +41,15 @@ WHITE = (255, 255, 255)
 FPS = 60
 
 # Player attributes
-PLAYER_SIZE = 25
+PLAYER_WIDTH = 50
+PLAYER_HEIGHT = 55
 
 player_speed = 5
 
 # Obstacle attributes
-OBSTACLE_WIDTH = 20
-OBSTACLE_HEIGHT = 20
-obstacle_speed = 5
+OBSTACLE_WIDTH = 40
+OBSTACLE_HEIGHT = 60
+obstacle_speed = 1
 
 
 # Font
@@ -59,11 +60,11 @@ font = pygame.font.SysFont(None, 36)
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((OBSTACLE_WIDTH, OBSTACLE_HEIGHT))
-        self.image.fill(BLACK)
+        self.load_img = pygame.image.load(images_dir / "cactus_9.png")
+        self.image = pygame.transform.scale(self.load_img, (OBSTACLE_WIDTH, OBSTACLE_HEIGHT))
         self.rect = self.image.get_rect()
         self.rect.x = GameSettings.screen_width
-        self.rect.y = GameSettings.screen_width - OBSTACLE_HEIGHT - 10
+        self.rect.y = GameSettings.screen_height - OBSTACLE_HEIGHT
 
         self.explosion = pygame.image.load(images_dir / "explosion1.gif")
 
@@ -87,11 +88,12 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.v_y = 0
-        self.image = pygame.Surface((PLAYER_SIZE, PLAYER_SIZE))
-        self.image.fill(BLUE)
+        self.load_img = pygame.image.load(images_dir / "dino_0.png")
+        self.image = pygame.transform.scale(self.load_img, (PLAYER_WIDTH, PLAYER_HEIGHT))
+
         self.rect = self.image.get_rect()
         self.rect.x = 50
-        self.rect.y = GameSettings.screen_height - PLAYER_SIZE - 10
+        self.rect.y = GameSettings.screen_height - PLAYER_HEIGHT
         self.speed = player_speed
 
         self.is_jumping = False
@@ -108,6 +110,7 @@ class Player(pygame.sprite.Sprite):
             # we need to have a negative y velocity
                 self.is_jumping = True
                 d_v_y = -GameSettings.jump_velocity
+                
 
         # acelleration in the y direction
         a_y = -GameSettings.gravity
@@ -119,13 +122,15 @@ class Player(pygame.sprite.Sprite):
         d_v_y += -a_y * GameSettings.d_t
 
         # Change in the position due to the velocity
-        self.v_y += d_v_y * GameSettings.d_t
+        self.v_y += d_v_y
 
         if self.is_jumping is False:
             self.v_y = 0
 
-        if self.is_jumping is True and (self.rect.y == GameSettings.screen_height or self.rect.y > GameSettings.screen_height):
+        if self.is_jumping is True and self.rect.y >= GameSettings.screen_height - PLAYER_HEIGHT:
             self.is_jumping = False
+            self.rect.y = GameSettings.screen_height - PLAYER_HEIGHT
+   
 
        
         self.rect.y += self.v_y
@@ -161,7 +166,6 @@ def game_loop():
     # Group for obstacles
     obstacles = pygame.sprite.Group()
 
-    player = Player()
 
     obstacle_count = 0
 
@@ -188,8 +192,8 @@ def game_loop():
        
         # Draw everything
         screen.fill(WHITE)
-        pygame.draw.rect(screen, BLUE, player)
         obstacles.draw(screen)
+        player_group.draw(screen)
 
         # Display obstacle count
         obstacle_text = font.render(f"Obstacles: {obstacle_count}", True, BLACK)
