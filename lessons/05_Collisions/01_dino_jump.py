@@ -13,7 +13,7 @@ from pathlib import Path
 # Initialize Pygame
 pygame.init()
 
-images_dir = Path(__file__).parent / "images" if (Path(__file__).parent / "images").exists() else Path(__file__).parent / "assets"
+images_dir = Path(__file__).parent / "image" if (Path(__file__).parent / "image").exists() else Path(__file__).parent / "assets"
 
 class GameSettings:
 
@@ -189,6 +189,7 @@ def game_loop():
         collider = pygame.sprite.spritecollide(player, obstacles, dokill=False)
         if collider:
             collider[0].explode()
+            game_over = True
        
         # Draw everything
         screen.fill(WHITE)
