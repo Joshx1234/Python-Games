@@ -4,6 +4,7 @@ tiling it to fill the screen.
 
 """
 import pygame
+import random
 
 # Initialize Pygame
 pygame.init()
@@ -14,42 +15,54 @@ assets = Path(__file__).parent / 'images'
 # Set up display
 screen_width = 600
 screen_height = 600
+scroll_speed = 5
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Tiled Background')
 
-def make_tiled_bg(screen, bg_file):
-    # Scale background to match the screen height
+
+class MultiScreen(pygame.sprite.Sprite):
     
-    bg_tile = pygame.image.load(bg_file).convert()
-    
-    background_height = screen.get_height()
-    bg_tile = pygame.transform.scale(bg_tile, (bg_tile.get_width(), screen.get_height()))
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.Surface((screen_width, screen_height))
+        self.screen_fill = pygame.Surface((screen.get_width(), screen.get_height()))
+        self.surface = pygame.Surface(((screen_width*2), screen_height))
 
-    # Get the dimensions of the background after scaling
-    background_width = bg_tile.get_width()
+        for x in range(0, screen.get_width(), 100):
+            sa = pygame.Surface((100, screen_height))
+            sa.fill((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+            self.screen_fill.blit(sa, (x, 0))
+            print(x)
+        self.image.blit(self.screen_fill, (0,0))
+        self.image.blit(self.screen_fill, (screen_width, 0))
 
-    # Make an image the is the same size as the screen
-    image = pygame.Surface((screen.get_width(), screen.get_height()))
+        self.rect = self.image.get_rect()
+        self.rect.x = 0
+        self.rect.y = 0
 
-    # Tile the background image in the x-direction
-    for x in range(0, screen.get_width(), background_width):
-        image.blit(bg_tile, (x, 0))
-        
-    return image
+    def update(self):
+        self.rect.x -= scroll_speed
+        if self.rect.right <= screen_width:
+            self.rect.x = 0
 
-background = make_tiled_bg(screen, assets/'background_tile.gif')
+pic = MultiScreen()
 
+sprites = pygame.sprite.Group()
+
+sprites.add(pic)
 # Main loop
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+    sprites.update()
 
-    screen.blit(background,(0,0))
+    sprites.draw(screen)
 
     # Update the display
     pygame.display.flip()
+
 
 # Quit Pygame
 pygame.quit()
