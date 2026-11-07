@@ -3,8 +3,10 @@ from pathlib import Path
 
 images = Path(__file__).parent / 'images'
 
-def get_sprite(sheet, x, y, width, height):
-    frame = pygame.Surface
+def SpriteSheet(sheet, x, y, width, height):
+    frame = pygame.Surface((width, height))
+    frame.blit(sheet, (0, 0), (width, height))
+    return frame
 def scale_sprites(sprites, scale):
     """Scale a list of sprites by a given factor.
 
