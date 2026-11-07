@@ -24,9 +24,10 @@ class MultiScreen(pygame.sprite.Sprite):
     
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((screen_width, screen_height))
+        self.image = pygame.Surface(((screen_width*2), screen_height))
         self.screen_fill = pygame.Surface((screen.get_width(), screen.get_height()))
         self.surface = pygame.Surface(((screen_width*2), screen_height))
+        self.scroll = pygame
 
         for x in range(0, screen.get_width(), 100):
             sa = pygame.Surface((100, screen_height))
@@ -44,6 +45,7 @@ class MultiScreen(pygame.sprite.Sprite):
         self.rect.x -= scroll_speed
         if self.rect.right <= screen_width:
             self.rect.x = 0
+        print(self.rect.right)    
 
 pic = MultiScreen()
 
