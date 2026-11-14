@@ -3,9 +3,11 @@ from pathlib import Path
 
 images = Path(__file__).parent / 'images'
 
-def SpriteSheet(sheet, x, y, width, height):
+def SpriteSheet(sheet, x, y, cellsize):
+    width = cellsize[0]
+    height = cellsize[1]
     frame = pygame.Surface((width, height))
-    frame.blit(sheet, (0, 0), (width, height))
+    frame.blit(sheet, ((-x * width), (-y * height)), (width, height))
     return frame
 def scale_sprites(sprites, scale):
     """Scale a list of sprites by a given factor.
@@ -30,12 +32,20 @@ def main():
     # Load the sprite sheet
     filename = images / 'spritesheet.png'  # Replace with your actual file path
     cellsize = (16, 16)  # Replace with the size of your sprites
-    spritesheet = SpriteSheet(filename, cellsize)
+    sheet = pygame.image.load(filename)
 
 
-    # Load a strip sprites
-    frog_sprites = scale_sprites(spritesheet.load_strip(0, 4, colorkey=-1) , 4)
-    allig_sprites = scale_sprites(spritesheet.load_strip( (0,4), 7, colorkey=-1), 4)
+    frog_sprite = []
+    for i in range(4):
+        sprite = SpriteSheet(sheet, i, 0, cellsize)
+        frog_sprite.append(sprite)
+
+    allig_sprite = []
+    for i in range(4):
+        sprite = SpriteSheet(sheet, (i + 4), 1, cellsize)
+        allig_sprite.append(sprite)
+
+
 
     # Compose an image
     log = spritesheet.compose_horiz([24, 25, 26], colorkey=-1)
@@ -50,7 +60,7 @@ def main():
     # Main game loop
     running = True
     
-    sprite_rect = frog_sprites[0].get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+    sprite_rect = frog_sprite[0].get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
     
     pygame.math.Vector2(1, 0)
     def draw_alligator(alligator, index):
@@ -83,15 +93,15 @@ def main():
         frame_count += 1
         
         if frame_count % frames_per_image == 0: 
-            frog_index = (frog_index + 1) % len(frog_sprites)
-            allig_index = (allig_index + 1) % len(allig_sprites)
+            frog_index = (frog_index + 1) % len(frog_sprite)
+            allig_index = (allig_index + 1) % len(allig_sprite)
         
         # Get the current sprite and display it in the middle of the screen
 
         
-        screen.blit(frog_sprites[frog_index], sprite_rect)
+        screen.blit(frog_sprite[frog_index], sprite_rect)
 
-        composed_alligator = draw_alligator(allig_sprites, allig_index)
+        composed_alligator = draw_alligator(allig_sprite, allig_index)
         screen.blit(composed_alligator,  sprite_rect.move(0, 100))
 
         screen.blit(log,  sprite_rect.move(0, -100))
