@@ -1,11 +1,15 @@
 import pygame
-from jtlgames.spritesheet import SpriteSheet
 from pathlib import Path
 import random 
 
 images = Path(__file__).parent / 'images'
 
-
+def SpriteSheet(sheet, x, y, cellsize):
+    width = cellsize[0]
+    height = cellsize[1]
+    frame = pygame.Surface((width, height))
+    frame.blit(sheet, (-x * width, -y * height))
+     
 
 
 # Initialize Pygame
@@ -28,13 +32,17 @@ pygame.display.set_caption("")
 # Load the sprite sheet
 filename = images / 'spritesheet.png'  # Replace with your actual file path
 cellsize = (16, 16)  # Replace with the size of your sprites
-ss = SpriteSheet(filename, cellsize)
+sheet = pygame.image.load(filename)
 
 # Get a bunch of images from the sprite sheet
-log = ss.compose_horiz([24, 25, 26])
-alig = ss.compose_horiz([32, 33, 15])
-frog_g = ss.image_at(4)
-frog_p = ss.image_at(76)
+log = SpriteSheet(sheet, 1, 3, cellsize*3)
+alig1 = SpriteSheet(sheet, 1, 4, cellsize*2)
+alig2 = SpriteSheet(sheet, 8, 2, cellsize)
+alig = pygame.Surface(cellsize[0]*3, cellsize[1])
+alig.blit((cellsize[0]*2, cellsize[1]), alig1)
+alig.blit((cellsize[0]*3, cellsize[1]), alig2)
+frog_g = SpriteSheet(sheet, 5, 1, cellsize)
+frog_p = SpriteSheet(sheet, )
 fly = ss.image_at(57)
 
 

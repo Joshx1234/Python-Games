@@ -7,7 +7,7 @@ def SpriteSheet(sheet, x, y, cellsize):
     width = cellsize[0]
     height = cellsize[1]
     frame = pygame.Surface((width, height))
-    frame.blit(sheet, ((-x * width), (-y * height)), (width, height))
+    frame.blit(sheet, (-x * width, -y * height))
     return frame
 def scale_sprites(sprites, scale):
     """Scale a list of sprites by a given factor.
@@ -48,7 +48,7 @@ def main():
 
 
     # Compose an image
-    log = spritesheet.compose_horiz([24, 25, 26], colorkey=-1)
+    log = SpriteSheet(sheet, 5, 1, cellsize*4)
     log = pygame.transform.scale(log, (log.get_width() * 4, log.get_height() * 4))
 
     # Variables for animation
